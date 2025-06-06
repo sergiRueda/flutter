@@ -94,30 +94,39 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         backgroundColor: const Color(0xFF1976D2),
         elevation: 4,
         toolbarHeight: 90,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/logo_2.png',
-              width: 170,
-              height: 170,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Administrador - Sistema de Ambulancias',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white),
-            ),
-            const Spacer(),
-            IconButton(
-              icon: const FaIcon(FontAwesomeIcons.rightFromBracket),
-              tooltip: 'Cerrar sesión',
-              color: Colors.white,
-              onPressed: _logout,
-            ),
-          ],
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            final isSmallScreen = constraints.maxWidth < 600;
+
+            return Row(
+              children: [
+                Image.asset(
+                  'assets/images/logo_2.png',
+                  width: isSmallScreen ? 50 : 170,
+                  height: isSmallScreen ? 50 : 170,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(width: 10),
+                if (!isSmallScreen)
+                  const Expanded(
+                    child: Text(
+                      'Administrador - Sistema de Ambulancias',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white),
+                    ),
+                  ),
+                const Spacer(),
+                IconButton(
+                  icon: const FaIcon(FontAwesomeIcons.rightFromBracket),
+                  tooltip: 'Cerrar sesión',
+                  color: Colors.white,
+                  onPressed: _logout,
+                ),
+              ],
+            );
+          },
         ),
       ),
       body: Column(

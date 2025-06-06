@@ -16,7 +16,6 @@ class _RegisterPublicScreenState extends State<RegisterPublicScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   final Map<String, String> rolesMap = {
-    "Administrador": "ADMINISTRADOR",
     "Conductor": "CONDUCTOR",
     "Enfermero": "ENFERMERO",
     "Paramédico": "PARAMEDICO",
@@ -139,7 +138,8 @@ class _RegisterPublicScreenState extends State<RegisterPublicScreen> {
                 const SizedBox(height: 15),
                 _buildInput("Email", emailController),
                 const SizedBox(height: 15),
-                _buildInput("Contraseña", passwordController, obscureText: true),
+                _buildInput("Contraseña", passwordController,
+                    obscureText: true),
                 const SizedBox(height: 15),
                 DropdownButtonFormField<String>(
                   value: selectedReadableRole,
