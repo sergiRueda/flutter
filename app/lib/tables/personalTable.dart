@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../config.dart'; // Importa tu configuración con la baseUrl
+import '../config.dart'; // Asegúrate que este contiene Config.baseUrl
 
 class PersonalTable extends StatefulWidget {
   const PersonalTable({super.key});
@@ -145,91 +145,99 @@ class _PersonalTableState extends State<PersonalTable> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00C853),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            onPressed: () => Navigator.pushNamed(context, '/register'),
-            child: const Text("Agregar Personal",
-                style: TextStyle(color: Colors.white)),
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00C853),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                  ),
+                  onPressed: () => Navigator.pushNamed(context, '/register'),
+                  child: const Text(
+                    "Agregar Personal",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : errorMessage != null
+                      ? Center(
+                          child: Text(
+                            errorMessage!,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            headingRowColor: WidgetStateProperty.all(
+                                const Color(0xFF1976D2)),
+                            headingTextStyle: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            columns: const [
+                              DataColumn(label: Text("ID")),
+                              DataColumn(label: Text("Nombre")),
+                              DataColumn(label: Text("Email")),
+                              DataColumn(label: Text("Rol")),
+                              DataColumn(label: Text("Acciones")),
+                            ],
+                            rows: personal.map((person) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(
+                                    person["id"].toString(),
+                                    style: const TextStyle(color: Colors.black),
+                                  )),
+                                  DataCell(Text(
+                                    person["nombre"],
+                                    style: const TextStyle(color: Colors.black),
+                                  )),
+                                  DataCell(Text(
+                                    person["email"],
+                                    style: const TextStyle(color: Colors.black),
+                                  )),
+                                  DataCell(Text(
+                                    (person["rol"] ?? "Sin rol")
+                                        .toString()
+                                        .split('.')
+                                        .last,
+                                    style: const TextStyle(color: Colors.black),
+                                  )),
+                                  DataCell(Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit,
+                                            color: Colors.blue),
+                                        onPressed: () => showEditDialog(person),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () =>
+                                            deletePersonal(person["id"]),
+                                      ),
+                                    ],
+                                  )),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+            ],
           ),
         ),
-        const SizedBox(height: 20),
-        isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : errorMessage != null
-                ? Center(
-                    child: Text(
-                      errorMessage!,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  )
-                : Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        headingRowColor:
-                            WidgetStateProperty.all(const Color(0xFF1976D2)),
-                        headingTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        columns: const [
-                          DataColumn(label: Text("ID")),
-                          DataColumn(label: Text("Nombre")),
-                          DataColumn(label: Text("Email")),
-                          DataColumn(label: Text("Rol")),
-                          DataColumn(label: Text("Acciones")),
-                        ],
-                        rows: personal.map((person) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(
-                                person["id"].toString(),
-                                style: const TextStyle(color: Colors.black),
-                              )),
-                              DataCell(Text(
-                                person["nombre"],
-                                style: const TextStyle(color: Colors.black),
-                              )),
-                              DataCell(Text(
-                                person["email"],
-                                style: const TextStyle(color: Colors.black),
-                              )),
-                              DataCell(Text(
-                                (person["rol"] ?? "Sin rol")
-                                    .toString()
-                                    .split('.')
-                                    .last,
-                                style: const TextStyle(color: Colors.black),
-                              )),
-                              DataCell(Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit,
-                                        color: Colors.blue),
-                                    onPressed: () => showEditDialog(person),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                    onPressed: () =>
-                                        deletePersonal(person["id"]),
-                                  ),
-                                ],
-                              )),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-      ],
+      ),
     );
   }
 }
